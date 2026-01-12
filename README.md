@@ -23,7 +23,9 @@ RP2040 Zero Module.  (other RP2040 modules can also be used, such as the Pico)
 
 5 push button switches. (Tactile switches)
 
-USB-C cable to bare wire. (Alternatively a USB type A socket can be fitted to the programmer and a USB-C to USB-A cable used for the connection.)
+USB A PCB Mount Socket. 
+
+2 15K resistors
 
 ## Construction
 
@@ -123,7 +125,7 @@ The Sketch should compile and upload automatically to the RP2040. If the upload 
 
 When power is applied to the RP2040 USB-C socket the firmware will start and display "LBE-1420 Programmer  G4EML 2026"
 
-Connect the LBE-1420 to the RP2040.  After a few seconds it should be recognised and the display will show "LBE-1420 Connected" , the current Frequency and the GPS Lock Status. 
+Connect the LBE-1420 to the USB A socket on the programmer.  After a few seconds it should be recognised and the display will show "LBE-1420 Connected" , the current Frequency and the GPS Lock Status. 
 
 To change the frequency press the Enter button. 
 A new line will appear at the bottom of the display. " M00=  10.000000 MHz "  (note that on first use all memories will be initialised to 10.000000 MHz.)
