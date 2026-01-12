@@ -33,7 +33,7 @@ The prototype was constructed on matrix board.
 
 This is the schematic. 
 
-[Schematic.pdf](https://github.com/user-attachments/files/24570822/Schematic.pdf)
+[Schematic.pdf](https://github.com/g4eml/RP2040-LBE142x/blob/main/Schematic.pdf)
 
 
 ## Programming or updating the RP2040 Zero Module (quick method)
