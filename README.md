@@ -22,6 +22,15 @@ RP2040 Zero Module.  (other RP2040 modules can also be used, such as the Pico)
 5 push button switches. (Tactile switches)
 USB-C cable to bare wire. (Alternatively a USB type A socket can be fitted to the programmer and a USB-C to USB-A cable used for the connection.)
 
+## Construction
+
+The prototype was constructed on matrix board.
+
+This is the schematic. 
+
+[Schematic.pdf](https://github.com/user-attachments/files/24570822/Schematic.pdf)
+
+
 ## Programming or updating the RP2040 Zero Module (quick method)
 
 1. Locate the latest compiled firmware file 'RP2040_LBE142x.uf2' which will be found here https://github.com/g4eml/RP2040_LBE142x/releases and save it to your desktop. 
