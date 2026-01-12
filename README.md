@@ -18,8 +18,11 @@ Memories can be changed using the 5 menu buttons.
 ## Requirements
 
 RP2040 Zero Module.  (other RP2040 modules can also be used, such as the Pico)
+
 1.3" OLED display.  128 x 64 pixels single colour. Available from many sources. Try to get one with the SH1106 Controller chip. 
+
 5 push button switches. (Tactile switches)
+
 USB-C cable to bare wire. (Alternatively a USB type A socket can be fitted to the programmer and a USB-C to USB-A cable used for the connection.)
 
 ## Construction
