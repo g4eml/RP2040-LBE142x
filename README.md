@@ -2,11 +2,11 @@
 
 ## Description
 
-Stand alone programmer for the Leo Bodner LBE-1420 GPSDO. 
+Stand alone programmer for the Leo Bodner LBE-1420 and LBE-1421 GPSDOs. 
 
 ## Features
 
-Connects to LBE1420 using USB. Allows the current frequency of the unit to be changed without needing to be connected to a computer. 
+Connects to LBE-1420 or LBE-1421 using USB. Allows the current frequencies of the unit to be changed without needing to be connected to a computer. 
 
 100 memories to store regularly used frequencies. 
 
@@ -125,20 +125,22 @@ The Sketch should compile and upload automatically to the RP2040. If the upload 
 
 When power is applied to the RP2040 USB-C socket the firmware will start and display "LBE-1420 Programmer  G4EML 2026"
 
-Connect the LBE-1420 to the USB A socket on the programmer.  After a few seconds it should be recognised and the display will show "LBE-1420 Connected" , the current Frequency and the GPS Lock Status. 
+Connect the LBE-142x to the USB A socket on the programmer.  After a few seconds it should be recognised and the display will show "LBE-1420 Connected" , the current Frequencies and the GPS Lock Status. 
 
 To change the frequency press the Enter button. 
 A new line will appear at the bottom of the display. " M00=  10.000000 MHz "  (note that on first use all memories will be initialised to 10.000000 MHz.)
-The M00 part of the line will be underlined, indicating the Memory number can be changed. Do this with the Up or down buttons.  
-When you have selected the memory you require press the Enter button. The memory frequency will be transfered to the LBE-1420 and the status line at the top of the screen should it has been accepted. 
+The M00 part of the line will be underlined, indicating the Memory number can be changed. Do this with the Up or down buttons.
+When connected to a LBE-1421 each press of the up or down button will cycle between F1 and F2 before changing the memory number. 
+When you have selected the memory you require press the Enter button. The memory frequency will be transfered to the LBE-142x and the status lines at the top of the screen should show it has been accepted. 
 
 To change the memory frequencies. 
 Fist select the required memory using the Up and down bottons. 
+For the LBE-1421 make sure you have also selected the correct output. 
 Then press the right button to move the underline cursor to the first of the frequency digits (1000 Mhz).
 Position the cursor on the required digit using the left and right buttons.
 Change the digit using the Up and Down buttons. 
 When you have selected the frequency you require press the Enter button. 
-The frequency will be transfered to the LBE-1420 and will also be saved to the RP2040 EEPROM for future use. 
+The frequency will be transfered to the LBE-142x and will also be saved to the RP2040 EEPROM for future use. 
 
 
 
