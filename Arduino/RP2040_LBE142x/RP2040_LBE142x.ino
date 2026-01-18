@@ -25,7 +25,7 @@
 #include <Adafruit_SH110X.h>
 #endif
 
-#define I2CADD 0x3C       //dISPLAY i2c Address
+#define I2CADD 0x3C       //DISPLAY i2c Address
 //#define I2CADD 0x78
 
 #define HOST_PIN_DP   2   // Pin used as D+ for host, D- on next sequential pin.
@@ -33,12 +33,25 @@
 #define I2CSDAPin 6
 #define I2CSCLPin 7
 
-//Switches
+//Switches for PCB Version
+
 #define UpPin 13
 #define DownPin 10
 #define LeftPin 9
 #define RightPin 11
 #define EnterPin 12
+
+#define INVERTSCREEN             
+
+//Switches for Dev Version
+
+// #define UpPin 10
+// #define DownPin 13
+// #define LeftPin 9
+// #define RightPin 12
+// #define EnterPin 11
+
+
 
 enum buttons {NONE,UP,DOWN,LEFT,RIGHT,ENTER};
 
@@ -74,18 +87,18 @@ Adafruit_SH1106G display=Adafruit_SH1106G(128,64,&Wire1,-1);
 #define CMD_BLINK_LEDS           0x02     //02 00 will cause the leds to blink for a few seconds
 #define CMD_SET_FREQ_TEMP_1420   0x03     //03 f0 f1 f2 f3      send 4 byte integer representing the frequency in Hz f0 is LSB F3 is MSB. Frequency is temporary and not stored 
 #define CMD_SET_FREQ_1420        0x04     //04 f0 f1 f2 f3      send 4 byte integer representing the frequency in Hz f0 is LSB F3 is MSB. Frequency is stored
-#define CMD_SET_FREQ1_TEMP_1421  0x05     //05 00 d0 d1 d2 f0 f1 f2 f3     Frequency1 in Hz. d is fractional part MOD 16777216   f is integer part. Temporary
-#define CMD_SET_FREQ1_1421       0x06     //06 00 d0 d1 d2 f0 f1 f2 f3     Frequency1 in Hz. d is fractional part MOD 16777216   f is integer part. Stored
+#define CMD_SET_FREQ1_TEMP       0x05     //05 00 d0 d1 d2 f0 f1 f2 f3     Frequency1 in Hz. d is fractional part MOD 16777216   f is integer part. Temporary
+#define CMD_SET_FREQ1            0x06     //06 00 d0 d1 d2 f0 f1 f2 f3     Frequency1 in Hz. d is fractional part MOD 16777216   f is integer part. Stored
 #define CMD_SET_SATS             0x07     //07 nn     where nn is bitmap for sats enabled. 0x01=GPS 0x02=SBAS 0x04=Galileo 0x08=Beideo 0x40=GLONASS 
 #define CMD_SET_MODE             0x09     //09 nn     where nn is the mode  00=Portable 02=Stationary 08=Airbourne 
 
-#define CMD_SET_FREQ2_TEMP_1421  0x00     //Not Confirmed
-#define CMD_SET_FREQ2_1421       0x00     //Not Confirmed
+#define CMD_SET_FREQ2_TEMP       0x09     //Not Confirmed
+#define CMD_SET_FREQ2            0x0A     //Not Confirmed
 
 #define CMD_SET_PLL_FLL          0x0B     //0B nn     where nn =00 is Phase Locked Loop    nn = 01 is Frequency Locked Loop
-#define CMD_SET_PPS_1421         0x0C     //Unconfirmed
+#define CMD_SET_PPS              0x0C     //Unconfirmed
 #define CMD_SET_POWER1           0x0D     //0D 00       Set output power  00 = high power 01=low power
-#define CMD_SET_POWER2_1421      0x0E     //Unconfirmed
+#define CMD_SET_POWER2           0x0E     //Unconfirmed
 
 #define CMD_STATUS               0x4B     //used to request a status message
 
@@ -116,6 +129,8 @@ struct LBEStatus
   bool output_enabled;
   uint32_t frequency;
   uint32_t freqdecimal;
+  uint32_t frequency2;
+  uint32_t freq2decimal;
 };
 
 LBEStatus lbe_status;
@@ -160,7 +175,9 @@ void setup()
   pinMode(EnterPin,INPUT_PULLUP);
 
   readSettings();
+#ifdef INVERTSCREEN
   display.setRotation(2);
+#endif
   display.clearDisplay();   // clears the screen and buffer
   display.setTextSize(0);
   display.setTextColor(1);
@@ -175,6 +192,7 @@ void loop()
 {
   uint32_t val;
   static uint32_t lastFreq = 0;
+  static uint32_t lastFreq2 = 0;
   static bool lastGPS = 1;
   static bool noPress = false;
 
@@ -189,21 +207,38 @@ void loop()
   if (status_ready)
   {
     status_ready = false;
-    if(lbe_status.frequency != lastFreq)
+    if((lbe_status.frequency != lastFreq) || (lbe_status.frequency2 != lastFreq2))
     {
     display.setCursor(0,12);
     display.fillRect(0,12,128,8,0);
-    display.print("Freq= ");
+    if(lbe1421) 
+     {
+      display.print("F1= ");
+     }
+     else
+     {
+      display.print("Freq= ");     
+     }
     display.print((double) lbe_status.frequency / 1000000, 6);
     display.print(" MHz");
     lastFreq = lbe_status.frequency;
+
+    if(lbe1421)
+     {
+       display.setCursor(0,24);
+       display.fillRect(0,24,128,8,0);
+       display.print("F2= ");
+       display.print((double) lbe_status.frequency2 / 1000000, 6);
+       display.print(" MHz");
+       lastFreq2 = lbe_status.frequency2;
+     }
     display.display();
     }
 
     if(lbe_status.gps_lock != lastGPS)
     {
-    display.setCursor(0,24);
-    display.fillRect(0,24,128,8,0);
+    display.setCursor(0,24 + 12 * lbe1421);
+    display.fillRect(0,24 + 12 * lbe1421,128,8,0);
     display.print("GPS ");
     if(lbe_status.gps_lock == 1)
      {
@@ -289,6 +324,7 @@ void processButton(void)
   char ml[32];
   static uint32_t increment;
   uint8_t mult;
+  static uint8_t channel=1;
 
     switch(menuMode)
     {
@@ -300,6 +336,10 @@ void processButton(void)
           menuLine(ml);
           digitNumber =1;
           setUnderLine(digitNumber);
+          if(lbe1421)
+           {
+            highlight(channel); 
+           }
         }
 
       break;
@@ -307,22 +347,60 @@ void processButton(void)
       case MMEM:
        if(button == ENTER)
         {
-          lbeSetFrequency(1, memory[memNumber], true);
+          if(lbe1421)
+           {
+             lbeSetFrequency(channel, memory[memNumber], true);
+           }
+          else 
+          {
+            lbeSetFrequency(1, memory[memNumber], true);
+          }
           menuMode = MOFF;
           digitNumber =0;
           menuLine("");
           setUnderLine(digitNumber);
+          if(lbe1421)
+           {
+            highlight(0); 
+           }
           lastStatusTime = millis() - 4000;    //update the display in 1 second
           break;
         }
        if(button == UP)
         {
-          memNumber = (memNumber + 1) % NUMBEROFMEMS;
+          if(lbe1421)
+          {
+            channel=channel+1;
+            if(channel == 3) 
+             {
+              channel = 1;
+              memNumber = (memNumber + 1) % NUMBEROFMEMS;
+             }
+          }
+          else 
+          {
+             memNumber = (memNumber + 1) % NUMBEROFMEMS;
+          }
+
         }
         if(button == DOWN)
         {
-          memNumber = (memNumber -1);
-          if(memNumber > NUMBEROFMEMS) memNumber = NUMBEROFMEMS - 1;
+          if(lbe1421)
+           {
+             channel=channel-1;
+             if(channel == 0)
+               {
+                channel = 2;
+                memNumber = (memNumber -1);
+                if(memNumber > NUMBEROFMEMS) memNumber = NUMBEROFMEMS - 1;
+               }
+           }
+          else 
+           {
+                memNumber = (memNumber -1);
+                if(memNumber > NUMBEROFMEMS) memNumber = NUMBEROFMEMS - 1;
+           }
+ 
         }   
         if(button == RIGHT)
         {
@@ -332,6 +410,10 @@ void processButton(void)
        sprintf(ml,"M%02d= %11.6f MHz",memNumber , (double) memory[memNumber] / 1000000.0);
        menuLine(ml);
        setUnderLine(digitNumber);
+       if(lbe1421)
+           {
+            highlight(channel); 
+           }
        break;
 
        case MDIG:
@@ -426,6 +508,26 @@ void setUnderLine(uint8_t ul)
     display.display();
 }
 
+void highlight(uint8_t ul)
+{
+    switch(ul)
+    {
+      case 0:
+      display.fillRect(0,20,12,2,0);
+      display.fillRect(0,32,12,2,0);
+      break;
+      case 1:
+      display.fillRect(0,20,12,2,1);
+      display.fillRect(0,32,12,2,0);
+      break;
+      case 2:
+      display.fillRect(0,20,12,2,0);
+      display.fillRect(0,32,12,2,1);
+      break;
+    }
+
+    display.display();
+}
 void readSettings(void)
 {
   if(EEPROM.read(0) == 0x73)              //valid EEPROM
@@ -513,6 +615,16 @@ void tuh_hid_get_report_complete_cb(uint8_t dev_addr, uint8_t idx, uint8_t repor
 
   lbe_status.freqdecimal = status_buf[3] | (status_buf[4] << 8) | (status_buf[5] << 16);
 
+  if(lbe1421)
+   {
+      lbe_status.frequency2 =status_buf[14] | (status_buf[15] << 8) | (status_buf[16] << 16) | (status_buf[17] << 24);
+      lbe_status.freq2decimal = status_buf[11] | (status_buf[12] << 8) | (status_buf[13] << 16);
+   }
+  else 
+   {
+     lbe_status.frequency2 = 0;
+     lbe_status.freq2decimal = 0;
+   }
   status_ready = true;
 }
 
@@ -563,28 +675,31 @@ void lbeSetFrequency(uint8_t chan, uint32_t freq_hz, bool permanent)
   {
     if(chan == 2)
     {
-      send_buf[0] = CMD_SET_FREQ2_TEMP_1421;
+      send_buf[0] = CMD_SET_FREQ2_TEMP;
     }
     else
     {
-      send_buf[0] = CMD_SET_FREQ1_TEMP_1421;
+      send_buf[0] = CMD_SET_FREQ1_TEMP;
     }
 
   }
   else
   {
-    send_buf[0] = CMD_SET_FREQ_TEMP_1420;  
+    send_buf[0] = CMD_SET_FREQ1_TEMP;  
   }
 
   if(permanent)
   {
    send_buf[0] = send_buf[0] +1;
   }
-
-  send_buf[1] = freq_hz & 0xFF;
-  send_buf[2] = (freq_hz >> 8) & 0xFF;
-  send_buf[3] = (freq_hz >> 16) & 0xFF;
-  send_buf[4] = (freq_hz >> 24) & 0xFF;
+  send_buf[1] =  0;       
+  send_buf[2] =  0;       //fractional Hz part not currently implemented. 
+  send_buf[3] =  0;
+  send_buf[4] =  0;
+  send_buf[5] = freq_hz & 0xFF;
+  send_buf[6] = (freq_hz >> 8) & 0xFF;
+  send_buf[7] = (freq_hz >> 16) & 0xFF;
+  send_buf[8] = (freq_hz >> 24) & 0xFF;
   lbeSendFeature();
 }
 
@@ -618,7 +733,7 @@ void lbeSetPower(uint8_t chan, bool low)
 
 if((lbe1421) && (chan == 2))
   {
-    send_buf[0] = CMD_SET_POWER2_1421;
+    send_buf[0] = CMD_SET_POWER2;
   }
   else
   {
