@@ -34,6 +34,8 @@ USB A PCB Mount Socket.
 
 A PCB Design is included. The gerber files can be sent to any of the low cost PCB manufacturers. 
 
+Note that the USB-A socket and the two 15K resistors are fitted on the bottom side of the PCB. The RP2040 Zero, Buttons and Display are all fitted on the top side. Make sure you fit the USB-A socket before the Display. 
+
 Alternatively the design can easily be built on matrix board. 
 
 This is the schematic. 
