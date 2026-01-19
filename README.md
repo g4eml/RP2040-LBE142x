@@ -19,7 +19,10 @@ Memories can be changed using the 5 menu buttons.
 
 RP2040 Zero Module.  (other RP2040 modules can also be used, such as the Pico)
 
-1.3" OLED display.  128 x 64 pixels single colour. Available from many sources. Try to get one with the SH1106 Controller chip. 
+1.3" I2C OLED display (4 Pin type).  128 x 64 pixels single colour. Available from many sources. Try to get one with the SH1106 Controller chip.
+
+**Warning...** These displays come from various manufacturers. There does not seem to be any standard for the pin layout. Check the VCC and GND pins match the PCB layout. 
+Some versions of the display have configuration jumpers to swap the VCC and Ground Pins. Configure these so that Pin 1 is GND and Pin 2 is VCC. 
 
 5 push button switches. (Tactile switches)
 
@@ -29,7 +32,11 @@ USB A PCB Mount Socket.
 
 ## Construction
 
-The prototype was constructed on matrix board.
+A PCB Design is included. The gerber files can be sent to any of the low cost PCB manufacturers. 
+
+Note that the USB-A socket and the two 15K resistors are fitted on the bottom side of the PCB. The RP2040 Zero, Buttons and Display are all fitted on the top side. Make sure you fit the USB-A socket before the Display. 
+
+Alternatively the design can easily be built on matrix board. 
 
 This is the schematic. 
 
