@@ -50,8 +50,8 @@ Bottom View.
 
 ## Enclosure
 
-A 3d printable enclosure is included in the 3d Print folder.  This consists of three parts, the main box, the endcap and the pushbuttons. Note that the holes in th emain box are deliberately printed undersize. These need to be drilled out to 5mm diameter. This produces
-neater holes than trying to print them directly. The pushbuttons should be left connected together, do not cut them apart.
+A 3d printable enclosure is included in the 3d Print folder.  This consists of three parts, the main box, the endcap and the pushbuttons. Note that the holes in the main box are deliberately printed undersize. These need to be drilled out to 5mm diameter. This produces
+neater holes than trying to print them directly. The display window can be cut out with a sharp knife. The pushbuttons should be left connected together, do not cut them apart.
 
 ## Programming or updating the RP2040 Zero Module (quick method)
 
