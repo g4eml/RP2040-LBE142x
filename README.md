@@ -42,6 +42,11 @@ This is the schematic.
 
 [Schematic.pdf](https://github.com/g4eml/RP2040-LBE142x/blob/main/Schematic.pdf)
 
+Top View.
+[Top View](https://github.com/g4eml/RP2040-LBE142x/blob/main/TopView.jpg)
+
+Bottom View.
+[Bottom View](https://github.com/g4eml/RP2040-LBE142x/blob/main/BottomView.jpg)
 
 ## Programming or updating the RP2040 Zero Module (quick method)
 
