@@ -55,7 +55,7 @@ neater holes than trying to print them directly. The display window can be cut o
 
 ## Programming or updating the RP2040 Zero Module (quick method)
 
-1. Locate the latest compiled firmware file 'RP2040_LBE142x.uf2' which will be found here https://github.com/g4eml/RP2040_LBE142x/releases and save it to your desktop. 
+1. Locate the latest compiled firmware file 'RP2040_LBE142x.uf2' which will be found here https://github.com/g4eml/RP2040-LBE142x/releases and save it to your desktop. 
 
 2. Connect the Module to your PC using the USB-C port.. 
 
